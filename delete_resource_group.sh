@@ -7,4 +7,4 @@ set +o allexport
 # # az login
 
 az group delete \
---name $RESSOURCE_GROUP
+--name $RESOURCE_GROUP
