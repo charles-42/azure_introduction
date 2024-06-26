@@ -3,55 +3,69 @@ set -o allexport
 source .env
 set +o allexport
 
-pipelineName="pythonpipeline"
-
-
 # Creation du storage linked service
 
 StorageServiceName="storageLinkedService"
-StorageServiceContent="{\"type\":\"AzureStorage\",\"typeProperties\":{\"connectionString\":{\"type\":\"SecureString\",\"value\":\"DefaultEndpointsProtocol=https;AccountName=${STORAGE_ACCOUNT};AccountKey=${STORAGE_KEY}\"}}}"
+Storagejsonpath="python_pipeline/json/real_storage_properties.json"
 
-az datafactory linked-service create --factory-name $DATAFACTORYNAME --properties $StorageServiceContent --name $StorageServiceName --resource-group $RESOURCE_GROUP
+# Attention jq doit être installé sur votre machine
+StorageServiceContent=$(cat $Storagejsonpath | jq -c '.')
 
+# Créer le linked service
+az datafactory linked-service create \
+    --factory-name $DATAFACTORYNAME \
+    --properties "$StorageServiceContent" \
+    --name $StorageServiceName \
+    --resource-group $RESOURCE_GROUP
 
 # Création du Batch linked service
 
 BatchLinkedServiceName="batchLinkedService"
-BatchLinkedServiceContent="{\"type\":\"AzureBatch\",\"typeProperties\":{\"accountName\":\"$BATCHACCOUNTNAME\",\"batchUri\":\"$BATCHACCOUNTURL\",\"accessKey\":{\"type\":\"SecureString\",\"value\":\"$BATCHACCOUNTKEY\"}}}"
+Batchjsonpath="python_pipeline/json/real_batch_properties.json"
 
-# Créer le linked service pour Azure Batch
-az datafactory linked-service create --resource-group $RESOURCE_GROUP --factory-name $DATAFACTORYNAME --name $BatchLinkedServiceName --properties $BatchLinkedServiceContent
+# Attention jq doit être installé sur votre machine
+BatchServiceContent=$(cat $Batchjsonpath | jq -c '.')
+
+# Créer le linked service
+az datafactory linked-service create \
+    --factory-name $DATAFACTORYNAME \
+    --properties "$BatchServiceContent" \
+    --name $BatchLinkedServiceName \
+    --resource-group $RESOURCE_GROUP
 
 
-# # Définition JSON du pipeline avec l'activité batch custom et le service lié
-# pipelineContent='{
-#     "properties": {
-#         "activities": [
-#             {
-#                 "name": "yourBatchActivityName",
-#                 "type": "AzureBatch",
-#                 "typeProperties": {
-#                     "pool": {
-#                         "linkedServiceName": {
-#                             "referenceName": "'"$linkedServiceName"'",
-#                             "type": "LinkedServiceReference"
-#                         },
-#                         "poolName": "yourPoolName"
-#                     },
-#                     "job": {
-#                         "id": "yourJobId",
-#                         "task": {
-#                             "id": "yourTaskId",
-#                             "commandLine": "python hello_script.py"
-#                         }
-#                     }
-#                 }
-#             }
-#         ],
-#         "parameters": {},
-#         "annotations": []
-#     }
-# }'
+# Création du Pipeline
 
-# # Créer le pipeline avec l'activité batch custom et le service lié
-# az datafactory pipeline create --resource-group $resourceGroup --factory-name $dataFactoryName --name $pipelineName --pipeline "$pipelineContent"
+PipelineName="PythonPipeline"
+Pipelinejsonpath="python_pipeline/json/pipeline_properties.json"
+
+# Attention jq doit être installé sur votre machine
+PipelineContent=$(cat $Pipelinejsonpath | jq -c '.')
+
+# Créer le linked service
+az datafactory pipeline create \
+    --factory-name $DATAFACTORYNAME \
+    --pipeline "$PipelineContent" \
+    --name $PipelineName \
+    --resource-group $RESOURCE_GROUP
+
+# Création du Trigger
+
+TriggerName="TriggerPythonPipeline"
+Triggerjsonpath="python_pipeline/json/trigger_properties.json"
+
+# Attention jq doit être installé sur votre machine
+TriggerContent=$(cat $Triggerjsonpath | jq -c '.')
+
+# Créer le Trigger
+az datafactory trigger create \
+    --factory-name $DATAFACTORYNAME \
+    --properties "$TriggerContent" \
+    --name $TriggerName \
+    --resource-group $RESOURCE_GROUP
+
+# Start the trigger
+az datafactory trigger start \
+    --resource-group $RESOURCE_GROUP \
+    --factory-name $DATAFACTORYNAME \
+    --name $TriggerName

@@ -1,0 +1,16 @@
+{
+    "annotations": [],
+    "type": "AzureBatch",
+    "typeProperties": {
+        "batchUri": "https://datainge.francecentral.batch.azure.com",
+        "poolName": "pythonpool",
+        "accountName": "datainge",
+        "linkedServiceName": {
+            "referenceName": "storageLinkedService",
+            "type": "LinkedServiceReference"
+        },
+        "accessKey": {
+            "type": "SecureString",
+        }
+    }
+}
