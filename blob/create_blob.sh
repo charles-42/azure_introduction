@@ -32,6 +32,6 @@ az storage container create \
     --account-key $STORAGE_KEY
 
 # # Ecrire la clé de stockage dans le fichier .env
-# echo "\nSTORAGE_KEY='$STORAGE_KEY'" >> .env
+echo "\nSTORAGE_KEY='$STORAGE_KEY'" >> .env
 
 echo "Storage key: $STORAGE_KEY"

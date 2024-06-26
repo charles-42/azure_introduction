@@ -4,8 +4,8 @@ source .env
 set +o allexport
 
 # Variables
-FILE_PATH="/Users/charles/Desktop/github_logo.png"
-BLOB_NAME="photo.png"
+FILE_PATH="/Users/charles/Documents/pythonProject/azure_introduction/blob/script_hello.py"
+BLOB_NAME="script_hello.py"
 
 # Charger le fichier
 az storage blob upload \
