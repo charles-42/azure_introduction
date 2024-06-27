@@ -3,7 +3,7 @@ set -o allexport
 source .env
 set +o allexport
 
-# Creation du storage linked service
+# 1. Creation du storage linked service
 
 StorageServiceName="storageLinkedService"
 Storagejsonpath="python_pipeline/json/real_storage_properties.json"
@@ -18,7 +18,7 @@ az datafactory linked-service create \
     --name $StorageServiceName \
     --resource-group $RESOURCE_GROUP
 
-# Création du Batch linked service
+# 2. Création du Batch linked service
 
 BatchLinkedServiceName="batchLinkedService"
 Batchjsonpath="python_pipeline/json/real_batch_properties.json"
@@ -34,7 +34,7 @@ az datafactory linked-service create \
     --resource-group $RESOURCE_GROUP
 
 
-# Création du Pipeline
+# 3. Création du Pipeline
 
 PipelineName="PythonPipeline"
 Pipelinejsonpath="python_pipeline/json/pipeline_properties.json"
@@ -49,7 +49,7 @@ az datafactory pipeline create \
     --name $PipelineName \
     --resource-group $RESOURCE_GROUP
 
-# Création du Trigger
+# 4. Création du Trigger
 
 TriggerName="TriggerPythonPipeline"
 Triggerjsonpath="python_pipeline/json/trigger_properties.json"
@@ -64,7 +64,7 @@ az datafactory trigger create \
     --name $TriggerName \
     --resource-group $RESOURCE_GROUP
 
-# Start the trigger
+# 5. Start the trigger
 az datafactory trigger start \
     --resource-group $RESOURCE_GROUP \
     --factory-name $DATAFACTORYNAME \
